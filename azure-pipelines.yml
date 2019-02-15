@@ -6,16 +6,74 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'Ubuntu-16.04'
+stages:
+- stage: Build
+  jobs:
+  - job:
+    pool:
+      vmImage: 'Ubuntu-16.04'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '8.x'
-  displayName: 'Install Node.js'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.x'
+      displayName: 'Install Node.js'
 
-- script: |
-    npm install
-    npm test
-  displayName: 'npm install and build'
+    - script: |
+        npm install
+        npm test
+      displayName: 'npm install and build'
+
+- stage: Test
+  jobs:
+  - job:
+    pool:
+      vmImage: 'Ubuntu-16.04'
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.x'
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm install
+        npm test
+      displayName: 'npm install and build'
+  dependsOn: Build
+
+- stage: Staging
+  jobs:
+  - job:
+    pool:
+      vmImage: 'Ubuntu-16.04'
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.x'
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm install
+        npm test
+      displayName: 'npm install and build'
+  dependsOn: Test
+
+- stage: Production
+  jobs:
+  - job:
+    pool:
+      vmImage: 'Ubuntu-16.04'
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.x'
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm install
+        npm test
+      displayName: 'npm install and build'
+  dependsOn: Staging
